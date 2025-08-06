@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+<style>
+        body {
+            background-color: #313030; /* cinza escuro */
+            color: #ffffff; /* texto branco para contraste */
+        }
+    </style>
+    <style>
+        body {
+            background-color: #222;
+            color: #fff;
+            font-family: 'Segoe UI', Arial, sans-serif;
+            min-height: 100vh;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            justify-content: center; /* centraliza verticalmente */
+            align-items: center;     /* centraliza horizontalmente */
+        }
+        #lista_mensagens {
+            width: 100%;
+            max-width: 400px;
+            min-height: 200px;
+            max-height: 400px;
+            overflow-y: auto;
+            background: #333;
+            border-radius: 10px;
+            box-shadow: 0 2px 8px #0006;
+            margin: 20px 0;
+            padding: 15px;
+        }
+        input, button {
+            padding: 10px;
+            border-radius: 5px;
+            border: none;
+            margin: 5px;
+        }
+        button {
+            background: #4caf50;
+            color: #fff;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        button:hover {
+            background: #388e3c;
+        }
+    </style>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Olecizap</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.8.1/socket.io.js" integrity="sha512-8BHxHDLsOHx+flIrQ0DrZcea7MkHqRU5GbTHmbdzMRnAaoCIkZ97PqZcXJkKZckMMhqfoeaJE+DNUVuyoQsO3Q==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js" integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+</head>
+<body>
+   
+     <h1 style="display: flex; align-items: center; justify-content: center; gap: 10px; margin-top: 30px;">
+        <img src="{{ url_for('static', filename='falling.png') }}" width="50" style="vertical-align: middle;" />
+        <span style="vertical-align: middle;">BTB</span>
+    </h1> 
+  
+    <div id="lista_mensagens">
+    </div>
+    
+    <input type="text" id="usuario" placeholder="usuario" required>
+    <input type="text" id="mensagem" placeholder="mensagem" required>
+
+    <button id="botao">enviar</button>
+
+
+
+  <script type="text/javascript">
+    $(document).ready(function(){
+
+        var socket = io()
+        socket.on("connect", function(){
+            console.log("usuario conectou");
+        });
+
+        socket.on("message", function(data){
+            console.log("disparou uma mensagem");
+            $("#lista_mensagens").append($("<p>").text(data));
+        });
+
+        $("#botao").on("click", function(){
+            console.log("clicou no botão");
+            socket.send("-" + $("#usuario").val() + "-" + " " + $("#mensagem").val());
+            $("#mensagem").val("");
+        });
+
+        // Enviar mensagem ao pressionar Enter
+        $("#mensagem").on("keypress", function(e) {
+            if (e.which === 13) {
+                $("#botao").click();
+            }
+        });
+
+    })
+</script>
+    
+</body>
+</html>
